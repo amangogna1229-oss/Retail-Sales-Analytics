@@ -10,90 +10,75 @@ on:
       - main
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
 
     steps:
 
-      # Step 1 - Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2 - Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Step 3 - Install Dependencies
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas openpyxl jupyter nbformat
+          pip install -r "Requirements/Requirements.txt"
 
-      # Step 4 - Verify Python Version
       - name: Check Python Version
         run: python --version
 
-      # Step 5 - Verify Notebook Exists
+      - name: Show Repository Structure
+        run: |
+          pwd
+          ls -R
+
       - name: Verify Jupyter Notebook
         run: |
-          test -f Jupyter notebooks/Retail_Data_Transformation.ipynb
+          test -f "Jupyter notebooks/Retail_Data_Transformation.ipynb"
 
-      # Step 6 - Verify Power BI Dashboard Exists
-      - name: Verify Power BI Dashboard
+      - name: Verify Raw Dataset Files
         run: |
-          test -f dashboard/Retail_Sales_Dashboard.pbix
+          test -f "Raw Dataset/Customers.csv"
+          test -f "Raw Dataset/Orders.csv"
+          test -f "Raw Dataset/Products.csv"
+          test -f "Raw Dataset/Location.csv"
 
-      # Step 7 - Verify Excel Files Exist
-      - name: Verify Excel Files
+      - name: Validate CSV Files using Pandas
         run: |
-          test -f transformed_data/Customers_Transformed.xlsx
-          test -f transformed_data/Orders_Transformed.xlsx
-          test -f transformed_data/Products_Transformed.xlsx
-          test -f transformed_data/Location_Transformed.xlsx
-
-      # Step 8 - Validate Excel Files
-      - name: Validate Excel Files using Pandas
-        run: |
-          python <<EOF
+          python << EOF
           import pandas as pd
 
           files = [
-              "transformed_data/Customers_Transformed.xlsx",
-              "transformed_data/Orders_Transformed.xlsx",
-              "transformed_data/Products_Transformed.xlsx",
-              "transformed_data/Location_Transformed.xlsx"
+              "Raw Dataset/Customers.csv",
+              "Raw Dataset/Orders.csv",
+              "Raw Dataset/Products.csv",
+              "Raw Dataset/Location.csv"
           ]
 
           for file in files:
-              df = pd.read_excel(file)
-              print(f"{file}")
-              print(f"Rows    : {df.shape[0]}")
-              print(f"Columns : {df.shape[1]}")
-              print("-"*40)
+              df = pd.read_csv(file, encoding="latin1")
+              print("="*50)
+              print(file)
+              print("Rows :", df.shape[0])
+              print("Columns :", df.shape[1])
 
-          print("All Excel files validated successfully.")
+          print("All CSV files loaded successfully.")
           EOF
 
-      # Step 9 - Upload Dashboard
-      - name: Upload Power BI Dashboard
-        uses: actions/upload-artifact@v4
-        with:
-          name: PowerBI-Dashboard
-          path: dashboard/
-
-      # Step 10 - Upload Excel Files
-      - name: Upload Excel Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: Transformed-Excel-Files
-          path: transformed_data/
-
-      # Step 11 - Upload Notebook
-      - name: Upload Jupyter Notebook
+      - name: Upload Notebook Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Jupyter-Notebook
-          path: notebooks/
+          path: "Jupyter notebooks/"
+
+      - name: Upload Dashboard Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dashboard-Screenshots
+          path: Dashboard/
