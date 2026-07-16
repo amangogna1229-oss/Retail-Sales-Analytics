@@ -27,21 +27,38 @@ jobs:
         run: |
           test -f "Jupyter notebooks/Retail_Data_Transformation.ipynb"
 
-      - name: Validate Dataset
+      - name: Validate Raw Dataset
         run: |
           python - <<EOF
           import pandas as pd
 
-          customers = pd.read_csv("Raw Dataset/Customers.csv", encoding="latin1")
-          orders = pd.read_csv("Raw Dataset/Orders.csv", encoding="latin1")
-          products = pd.read_csv("Raw Dataset/Products.csv", encoding="latin1")
-          location = pd.read_csv("Raw Dataset/Location.csv", encoding="latin1")
+          files = [
+              "Raw Dataset/Customers.csv",
+              "Raw Dataset/Orders.csv",
+              "Raw Dataset/Products.csv",
+              "Raw Dataset/Location.csv"
+          ]
 
-          print("All datasets loaded successfully.")
-          print("Customers:", customers.shape)
-          print("Orders:", orders.shape)
-          print("Products:", products.shape)
-          print("Location:", location.shape)
+          for file in files:
+              print("=" * 50)
+              print("Reading:", file)
+
+              try:
+                  df = pd.read_csv(
+                      file,
+                      sep=";",
+                      encoding="latin1"
+                  )
+
+                  print("Rows:", df.shape[0])
+                  print("Columns:", df.shape[1])
+
+              except Exception as e:
+                  print("Error while reading:", file)
+                  print(e)
+                  raise
+
+          print("All datasets validated successfully.")
           EOF
 
       - name: Upload Notebook
