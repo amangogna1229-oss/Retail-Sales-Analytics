@@ -1,0 +1,31 @@
+
+Requirement (4 Page)
+What are the Total Sales?
+What are the Total Profits?
+How many total orders were placed?
+How many unique customers do we have?
+What is the overall profit margin?
+What is the average order value?
+What is the monthly sales trend?
+
+Which product category generates the highest sales?
+Which sub-category is the most profitable?
+Which products have the highest sales?
+Which products have the lowest sales?
+Which products are making losses?
+Which products receive the highest discounts?
+Which products have the highest profit margin?
+What are the Top 10 products by sales?
+What are the Bottom 10 products by profit?
+Which category contributes the most profit?
+
+Who are the top 10 customers by sales?
+Who are the top 10 customers by profit?
+Which customers have the highest average order value?
+Which customers placed the highest number of orders?
+Which country has the highest number of customers?
+
+Which states contribute the most profit?
+Which states are generating losses?
+Which category has the highest profit margin?
+How does discount impact profit?
