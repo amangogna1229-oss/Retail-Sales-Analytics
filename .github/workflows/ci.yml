@@ -1,22 +1,15 @@
-name: Retail Sales Analytics CI Pipeline
+name: Retail Sales Analytics CI
 
 on:
   push:
     branches:
       - main
 
-  pull_request:
-    branches:
-      - main
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -28,57 +21,37 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          # pip install -r "Requirements/Requirements.txt"
-
-      - name: Check Python Version
-        run: python --version
-
-      - name: Show Repository Structure
-        run: |
-          pwd
-          ls -R
+          pip install -r Requirements/Requirements.txt
 
       - name: Verify Jupyter Notebook
         run: |
           test -f "Jupyter notebooks/Retail_Data_Transformation.ipynb"
 
-      - name: Verify Raw Dataset Files
+      - name: Validate Dataset
         run: |
-          test -f "Raw Dataset/Customers.csv"
-          test -f "Raw Dataset/Orders.csv"
-          test -f "Raw Dataset/Products.csv"
-          test -f "Raw Dataset/Location.csv"
-
-      - name: Validate CSV Files using Pandas
-        run: |
-          python << EOF
+          python - <<EOF
           import pandas as pd
 
-          files = [
-              "Raw Dataset/Customers.csv",
-              "Raw Dataset/Orders.csv",
-              "Raw Dataset/Products.csv",
-              "Raw Dataset/Location.csv"
-          ]
+          customers = pd.read_csv("Raw Dataset/Customers.csv", encoding="latin1")
+          orders = pd.read_csv("Raw Dataset/Orders.csv", encoding="latin1")
+          products = pd.read_csv("Raw Dataset/Products.csv", encoding="latin1")
+          location = pd.read_csv("Raw Dataset/Location.csv", encoding="latin1")
 
-          for file in files:
-              df = pd.read_csv(file, encoding="latin1")
-              print("="*50)
-              print(file)
-              print("Rows :", df.shape[0])
-              print("Columns :", df.shape[1])
-
-          print("All CSV files loaded successfully.")
+          print("All datasets loaded successfully.")
+          print("Customers:", customers.shape)
+          print("Orders:", orders.shape)
+          print("Products:", products.shape)
+          print("Location:", location.shape)
           EOF
 
-      - name: Upload Notebook Artifact
+      - name: Upload Notebook
         uses: actions/upload-artifact@v4
         with:
           name: Jupyter-Notebook
           path: "Jupyter notebooks/"
 
-      - name: Upload Dashboard Screenshots
+      - name: Upload Dashboard
         uses: actions/upload-artifact@v4
         with:
-          name: Dashboard-Screenshots
+          name: Dashboard
           path: Dashboard/
