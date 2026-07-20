@@ -1,4 +1,4 @@
-name: Retail Sales Analytics CI
+name: Retail Sales Analytics CI Pipeline
 
 on:
   push:
@@ -6,32 +6,34 @@ on:
       - main
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout Repository
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install Required Libraries
-      - name: Install Python Libraries
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas numpy openpyxl jupyter nbformat
+      - name: Check Python Version
+        run: python --version
 
-      # Verify Notebook Exists
-      - name: Verify Jupyter Notebook
-        run: |
-          test -f "Jupyter notebooks/Retail_Data_Transformation.ipynb"
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-      # Validate Dataset
+      - name: Install Required Libraries
+        run: |
+          pip install pandas
+          pip install numpy
+          pip install openpyxl
+          pip install jupyter
+          pip install nbformat
+
       - name: Validate Raw Dataset
         run: |
           python - <<EOF
@@ -45,27 +47,43 @@ jobs:
           ]
 
           for file in files:
-              try:
-                  df = pd.read_csv(file, encoding="latin1")
-                  print(f"{file} : {df.shape}")
-              except Exception:
-                  # Try semicolon-separated files
-                  df = pd.read_csv(file, sep=";", encoding="latin1")
-                  print(f"{file} : {df.shape}")
-
-          print("All datasets validated successfully.")
+              df = pd.read_csv(file, encoding="latin1")
+              print(f"{file} Loaded Successfully")
+              print(f"Rows : {df.shape[0]}")
+              print(f"Columns : {df.shape[1]}")
           EOF
 
-      # Upload Notebook
-      - name: Upload Notebook
-        uses: actions/upload-artifact@v4
-        with:
-          name: Jupyter-Notebook
-          path: "Jupyter notebooks/"
+      - name: Check Missing Values
+        run: |
+          python - <<EOF
+          import pandas as pd
 
-      # Upload Dashboard
-      - name: Upload Dashboard
-        uses: actions/upload-artifact@v4
-        with:
-          name: Dashboard
-          path: Dashboard/
+          files = [
+              "Raw Dataset/Customers.csv",
+              "Raw Dataset/Orders.csv",
+              "Raw Dataset/Products.csv",
+              "Raw Dataset/Location.csv"
+          ]
+
+          for file in files:
+              df = pd.read_csv(file, encoding="latin1")
+              print(f"\n{file}")
+              print(df.isnull().sum())
+          EOF
+
+      - name: Validate Jupyter Notebook
+        run: |
+          jupyter nbconvert --to notebook --execute "Jupyter Notebooks/Retail_Data_Transformation.ipynb"
+
+      - name: Check Repository Structure
+        run: |
+          ls -R
+
+      - name: CI Validation Successful
+        run: |
+          echo "======================================="
+          echo "Retail Sales Analytics CI Passed"
+          echo "Datasets Validated Successfully"
+          echo "Notebook Executed Successfully"
+          echo "Repository Validation Completed"
+          echo "======================================="
