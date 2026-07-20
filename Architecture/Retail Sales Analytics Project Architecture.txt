@@ -27,7 +27,7 @@
 └───────────────┬───────────────┘
                 │
                 ▼
-      Medallion Architecture
+         Medallion Architecture
                 │
                 ▼
 ┌───────────────────────────────┐
@@ -40,7 +40,6 @@
 │ Silver Layer                  │
 │ • Data Cleaning               │
 │ • Null Handling               │
-│ • Data Validation             │
 │ • Standardization             │
 └───────────────┬───────────────┘
                 │
@@ -51,24 +50,34 @@
 │ • gold_retail                 │
 └───────────────┬───────────────┘
                 │
-      ┌─────────┴─────────┐
-      ▼                   ▼
-┌───────────────┐   ┌────────────────────┐
-│ Power BI      │   │ Delta Lake         │
-│ Dashboard     │   │ Operations         │
-│               │   │ • Update           │
-│               │   │ • Delete           │
-│               │   │ • Merge            │
-│               │   │ • SCD Type 2       │
-│               │   │ • Time Travel      │
-│               │   │ • History          │
-│               │   │ • Optimize         │
-│               │   │ • Vacuum           │
-└───────────────┘   └────────────────────┘
+                ▼
+┌───────────────────────────────┐
+│ Validation Notebook           │
+│-------------------------------│
+│ • Row Count Validation        │
+│ • Null Value Check            │
+│ • Duplicate Check             │
+│ • Sales & Profit Validation   │
+│ • Data Quality Verification   │
+└───────────────┬───────────────┘
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+┌─────────────────┐  ┌─────────────────────┐
+│ Power BI        │  │ Delta Lake          │
+│ Dashboard       │  │ Operations          │
+│                 │  │ • Update            │
+│                 │  │ • Delete            │
+│                 │  │ • Merge             │
+│                 │  │ • SCD Type 2        │
+│                 │  │ • Time Travel       │
+│                 │  │ • Optimize          │
+│                 │  │ • Vacuum            │
+└─────────────────┘  └─────────────────────┘
                 │
                 ▼
 ┌───────────────────────────────┐
-│ GitHub Repository             │
+│ GitHub + GitHub Actions (CI)  │
 │ • Version Control             │
-│ • GitHub Actions (CI)         │
+│ • Automated Validation        │
 └───────────────────────────────┘
