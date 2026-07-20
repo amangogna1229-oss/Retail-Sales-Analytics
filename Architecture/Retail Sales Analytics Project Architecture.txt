@@ -67,12 +67,12 @@
 │ Power BI        │  │ Delta Lake          │
 │ Dashboard       │  │ Operations          │
 │                 │  │ • Update            │
-│                 │  │ • Delete            │
+│                 │  │                     │
 │                 │  │ • Merge             │
 │                 │  │ • SCD Type 2        │
 │                 │  │ • Time Travel       │
-│                 │  │ • Optimize          │
-│                 │  │ • Vacuum            │
+│                 │  │                     │
+│                 │  │                     │
 └─────────────────┘  └─────────────────────┘
                 │
                 ▼
